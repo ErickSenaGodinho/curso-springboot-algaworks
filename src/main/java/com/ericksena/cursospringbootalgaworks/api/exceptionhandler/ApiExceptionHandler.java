@@ -13,8 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.ericksena.cursospringbootalgaworks.domain.exception.NegocioException;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -34,12 +37,26 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             fields.add(new Field(name, message));
         });
 
+        ErrorMessage errorMessage = instantiateErrorMassage(status, "Um ou mais campos estão inválidos", fields);
+
+        return handleExceptionInternal(ex, errorMessage, headers, status, request);
+    }
+
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<Object> handleNegocioException(NegocioException ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorMessage errorMessage = instantiateErrorMassage(status, ex.getMessage(), null);
+
+        return handleExceptionInternal(ex, errorMessage, new HttpHeaders(), status, request);
+    }
+
+    private final ErrorMessage instantiateErrorMassage(HttpStatus status, String title, List<Field> fields) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setStatus(status.value());
         errorMessage.setDateTime(LocalDateTime.now());
-        errorMessage.setTitle("Um ou mais campos estão inválidos");
+        errorMessage.setTitle(title);
         errorMessage.setFields(fields);
-
-        return handleExceptionInternal(ex, errorMessage, headers, status, request);
+        return errorMessage;
     }
 }
