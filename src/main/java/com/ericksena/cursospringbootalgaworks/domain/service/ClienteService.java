@@ -14,14 +14,19 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    public Cliente buscar(Long clienteId) {
+        return clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new NegocioException("Cliente não encontrado"));
+    }
+
     @Transactional
     public Cliente salvar(Cliente cliente) {
         boolean emailEmUso = clienteRepository.findByEmail(cliente.getEmail())
                 .stream()
                 .anyMatch(clienteExistente -> !clienteExistente.equals(cliente));
-                if(emailEmUso){
-                    throw new NegocioException("Email já está em uso.");
-                }
+        if (emailEmUso) {
+            throw new NegocioException("Email já está em uso.");
+        }
         return clienteRepository.save(cliente);
     }
 
