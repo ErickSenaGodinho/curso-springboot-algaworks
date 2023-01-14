@@ -1,6 +1,6 @@
 package com.ericksena.cursospringbootalgaworks.api.exceptionhandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     private final ErrorMessage instantiateErrorMassage(HttpStatus status, String title, List<Field> fields) {
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setStatus(status.value());
-        errorMessage.setDateTime(LocalDateTime.now());
+        errorMessage.setDateTime(OffsetDateTime.now());
         errorMessage.setTitle(title);
         errorMessage.setFields(fields);
         return errorMessage;

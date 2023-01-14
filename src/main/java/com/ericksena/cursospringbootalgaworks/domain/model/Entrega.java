@@ -1,7 +1,7 @@
 package com.ericksena.cursospringbootalgaworks.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -20,8 +20,6 @@ import javax.validation.groups.Default;
 import com.ericksena.cursospringbootalgaworks.domain.ValidationGroups;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -54,15 +52,12 @@ public class Entrega {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal taxa;
 
-    @JsonProperty(access = Access.READ_ONLY)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatusEntrega status;
 
-    @JsonProperty(access = Access.READ_ONLY)
     @Column(nullable = false)
-    private LocalDateTime dataPedido;
+    private OffsetDateTime dataPedido;
 
-    @JsonProperty(access = Access.READ_ONLY)
-    private LocalDateTime dataFinalizacao;
+    private OffsetDateTime dataFinalizacao;
 }

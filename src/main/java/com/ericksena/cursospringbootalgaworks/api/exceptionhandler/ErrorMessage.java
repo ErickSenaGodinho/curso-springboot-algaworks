@@ -1,6 +1,6 @@
 package com.ericksena.cursospringbootalgaworks.api.exceptionhandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 public class ErrorMessage {
     private Integer status;
-    private LocalDateTime dateTime;
+    private OffsetDateTime dateTime;
     private String title;
     private List<Field> fields;
 }

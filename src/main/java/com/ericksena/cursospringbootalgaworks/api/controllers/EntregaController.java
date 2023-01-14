@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ericksena.cursospringbootalgaworks.api.assembler.EntregaAssembler;
+import com.ericksena.cursospringbootalgaworks.api.model.EntregaModel;
+import com.ericksena.cursospringbootalgaworks.api.model.input.EntregaInput;
 import com.ericksena.cursospringbootalgaworks.domain.model.Entrega;
 import com.ericksena.cursospringbootalgaworks.domain.repository.EntregaRepository;
 import com.ericksena.cursospringbootalgaworks.domain.service.EntregaService;
@@ -27,22 +30,28 @@ public class EntregaController {
     private EntregaRepository entregaRepository;
     @Autowired
     private EntregaService entregaService;
+    @Autowired
+    private EntregaAssembler entregaAssembler;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Entrega criarEntrega(@Valid @RequestBody Entrega entrega) {
-        return entregaService.solicitar(entrega);
+    public EntregaModel criarEntrega(@Valid @RequestBody EntregaInput entregaInput) {
+        Entrega novaEntrega = entregaAssembler.toEntity(entregaInput);
+        Entrega entregaSolicitada = entregaService.solicitar(novaEntrega);
+        return entregaAssembler.toModel(entregaSolicitada);
     }
 
     @GetMapping
-    public List<Entrega> listar() {
-        return entregaRepository.findAll();
+    public List<EntregaModel> listar() {
+        return entregaAssembler.toCollectionModel(entregaRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Entrega> buscar(@PathVariable("id") Long entregaId) {
+    public ResponseEntity<EntregaModel> buscar(@PathVariable("id") Long entregaId) {
         return entregaRepository.findById(entregaId)
-                .map(ResponseEntity::ok)
+                .map(entrega -> {
+                    return ResponseEntity.ok(entregaAssembler.toModel(entrega));
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
